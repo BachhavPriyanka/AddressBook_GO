@@ -4,6 +4,47 @@ import "fmt"
 
 var contactStorage []Contact
 
+func EditContacts(persons *[]Contact) {
+
+	fmt.Println("Data in  edit func", *persons)
+
+	var nameToChange, newAddress, newCity, newState, newPhoneNum, newEmail string
+	var editField int
+	fmt.Println("Enter a name which you want to edit :")
+	fmt.Scanln(&nameToChange)
+	for i, person := range *persons {
+		if person.FirstName == nameToChange {
+			fmt.Println("Press : \n1.Address\n2.City \n3.State \n4.Phone Number \n5.Email")
+			fmt.Println("Enter what you want to edit : ")
+			fmt.Scanln(&editField)
+			switch editField {
+			case 1:
+				fmt.Println("Enter Address :")
+				fmt.Scanln(&newAddress)
+				(*persons)[i].Address = newAddress
+			case 2:
+				fmt.Println("Enter City :")
+				fmt.Scanln(&newCity)
+				(*persons)[i].City = newCity
+			case 3:
+				fmt.Println("Enter State :")
+				fmt.Scanln(&newState)
+				(*persons)[i].State = newState
+			case 4:
+				fmt.Println("Enter Phone Number :")
+				fmt.Scanln(&newPhoneNum)
+				(*persons)[i].PhoneNumber = newPhoneNum
+			case 5:
+				fmt.Println("Enter Email :")
+				fmt.Scanln(&newEmail)
+				(*persons)[i].Email = newEmail
+			}
+
+		}
+	}
+	fmt.Println(persons)
+
+}
 func DisplayContacts(persons *[]Contact) {
 	fmt.Println("********Displying Contact Details*********")
 	for _, p := range *persons {
@@ -17,6 +58,8 @@ func DisplayContacts(persons *[]Contact) {
 		fmt.Println("-----------------------------------")
 
 	}
+	// fmt.Println("What is getting printed", *persons)
+	EditContacts(persons)
 }
 
 func AddContact() {
