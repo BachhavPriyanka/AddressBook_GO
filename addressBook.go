@@ -4,6 +4,20 @@ import "fmt"
 
 var contactStorage []Contact
 
+func DeleteContact(persons *[]Contact) {
+	//Ability to delete person by using person name
+
+	var nameToDelete string
+	fmt.Println("Enter a name which you want to Delete :")
+	fmt.Scanln(&nameToDelete)
+	for i, person := range *persons {
+		if person.FirstName == nameToDelete {
+			*persons = append((*persons)[:i], (*persons)[i+1:]...)
+		}
+	}
+	fmt.Println(persons)
+}
+
 func EditContacts(persons *[]Contact) {
 
 	fmt.Println("Data in  edit func", *persons)
@@ -43,6 +57,7 @@ func EditContacts(persons *[]Contact) {
 		}
 	}
 	fmt.Println(persons)
+	DeleteContact(persons)
 
 }
 func DisplayContacts(persons *[]Contact) {
