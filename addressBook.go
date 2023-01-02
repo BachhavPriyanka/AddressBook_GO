@@ -1,8 +1,58 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var contactStorage []Contact
+
+func Operation() {
+	var option int
+	fmt.Println("\nSelect which operation do you wanna perform \n1.Add Contact\n2.Edit Contact\n3.Delete Contact\n4.Display Contact\n5.Exit")
+	fmt.Scanln(&option)
+	switch option {
+	case 1:
+		checkingDuplicateNames := filter(&contactStorage, duplicate)
+		if len(checkingDuplicateNames) > 0 {
+			fmt.Println("Duplicate entry press")
+			Operation()
+		} else {
+			AddContact()
+		}
+	case 2:
+		EditContacts(&contactStorage)
+	case 3:
+		DeleteContact(&contactStorage)
+	case 4:
+		DisplayContacts(&contactStorage)
+	case 5:
+		break
+
+	}
+
+}
+
+func duplicate(name string) bool {
+	var fName string
+	fmt.Println("Enter Name : ")
+	fmt.Scanln(&fName)
+	if name == fName {
+		return true
+	}
+	return false
+}
+
+func filter(person *[]Contact, duplicate func(string) bool) []Contact {
+	duplicateContact := []Contact{}
+	for _, val := range *person {
+		singleFirstName := val.FirstName
+		if duplicate(singleFirstName) {
+			duplicateContact = append(duplicateContact, val)
+
+		}
+	}
+	return duplicateContact
+}
 
 func DeleteContact(persons *[]Contact) {
 	//Ability to delete person by using person name
@@ -15,7 +65,8 @@ func DeleteContact(persons *[]Contact) {
 			*persons = append((*persons)[:i], (*persons)[i+1:]...)
 		}
 	}
-	fmt.Println(persons)
+
+	Operation()
 }
 
 func EditContacts(persons *[]Contact) {
@@ -56,10 +107,9 @@ func EditContacts(persons *[]Contact) {
 
 		}
 	}
-	fmt.Println(persons)
-	DeleteContact(persons)
-
+	Operation()
 }
+
 func DisplayContacts(persons *[]Contact) {
 	fmt.Println("********Displying Contact Details*********")
 	for _, p := range *persons {
@@ -73,71 +123,48 @@ func DisplayContacts(persons *[]Contact) {
 		fmt.Println("-----------------------------------")
 
 	}
-	// fmt.Println("What is getting printed", *persons)
-	EditContacts(persons)
+	Operation()
 }
 
 func AddContact() {
-	for {
-		var p Contact
 
-		fmt.Print("\nEnter Name: ")
-		_, err := fmt.Scanf("%s", &p.FirstName)
-		if err != nil {
-			fmt.Println("Error reading name:", err)
-			continue
-		}
+	var p Contact
 
-		fmt.Print("Enter Last Name: ")
-		_, err = fmt.Scanf("%s", &p.LastName)
-		if err != nil {
-			fmt.Println("Error reading last name:", err)
-			continue
-		}
+	fmt.Print("\nEnter Name: ")
+	_, err := fmt.Scanf("%s", &p.FirstName)
+	Error(err, "Name")
 
-		fmt.Print("Enter address: ")
-		_, err = fmt.Scanf("%s", &p.Address)
-		if err != nil {
-			fmt.Println("Error reading address:", err)
-			continue
-		}
-		fmt.Print("Enter City: ")
-		_, err = fmt.Scanf("%s", &p.City)
-		if err != nil {
-			fmt.Println("Error reading email:", err)
-			continue
-		}
-		fmt.Print("Enter State: ")
-		_, err = fmt.Scanf("%s", &p.State)
-		if err != nil {
-			fmt.Println("Error reading email:", err)
-			continue
-		}
-		fmt.Print("Enter phone number: ")
-		_, err = fmt.Scanf("%s", &p.PhoneNumber)
-		if err != nil {
-			fmt.Println("Error reading phone number:", err)
-			continue
-		}
-		fmt.Print("Enter email: ")
-		_, err = fmt.Scanf("%s", &p.Email)
-		if err != nil {
-			fmt.Println("Error reading email:", err)
-			continue
-		}
+	fmt.Print("Enter Last Name: ")
+	_, err = fmt.Scanf("%s", &p.LastName)
+	Error(err, "LastName")
 
-		contactStorage = append(contactStorage, p)
+	fmt.Print("Enter address: ")
+	_, err = fmt.Scanf("%s", &p.Address)
+	Error(err, "Address")
 
-		fmt.Print("Add another person? (y/n) ")
-		var answer string
-		_, err = fmt.Scanf("%s", &answer)
-		if err != nil {
-			fmt.Println("Error reading answer:", err)
-			continue
-		}
-		if answer != "y" {
-			break
-		}
+	fmt.Print("Enter City: ")
+	_, err = fmt.Scanf("%s", &p.City)
+	Error(err, "City")
+
+	fmt.Print("Enter State: ")
+	_, err = fmt.Scanf("%s", &p.State)
+	Error(err, "State")
+
+	fmt.Print("Enter phone number: ")
+	_, err = fmt.Scanf("%s", &p.PhoneNumber)
+	Error(err, "Phone number")
+
+	fmt.Print("Enter email: ")
+	_, err = fmt.Scanf("%s", &p.Email)
+	Error(err, "Email")
+
+	contactStorage = append(contactStorage, p)
+	Operation()
+
+}
+
+func Error(err error, value string) {
+	if err != nil {
+		fmt.Println("Error reading", value, ":")
 	}
-	DisplayContacts(&contactStorage)
 }

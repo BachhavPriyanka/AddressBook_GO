@@ -6,6 +6,7 @@ import (
 
 func main() {
 	fmt.Print("********Address book main**********")
-	AddContact()
+
+	Operation()
 
 }
