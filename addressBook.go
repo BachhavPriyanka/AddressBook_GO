@@ -2,23 +2,21 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 var contactStorage []Contact
 
 func Operation() {
 	var option int
-	fmt.Println("\nSelect which operation do you wanna perform \n1.Add Contact\n2.Edit Contact\n3.Delete Contact\n4.Display Contact\n5.Exit")
+	fmt.Println("\nSelect which operation do you wanna perform \n1.Add Contact\n2.Edit Contact\n3.Delete Contact\n4.Display Contact\n5.Search By city and state \n6.Exit")
 	fmt.Scanln(&option)
 	switch option {
 	case 1:
-		checkingDuplicateNames := filter(&contactStorage, duplicate)
-		if len(checkingDuplicateNames) > 0 {
-			fmt.Println("Duplicate entry press")
-			Operation()
-		} else {
-			AddContact()
-		}
+		var fName string
+		fmt.Println("Enter Name : ")
+		fmt.Scanln(&fName)
+		AddContact(fName)
 	case 2:
 		EditContacts(&contactStorage)
 	case 3:
@@ -26,20 +24,29 @@ func Operation() {
 	case 4:
 		DisplayContacts(&contactStorage)
 	case 5:
+		CityStatePersonSlice := Search(&contactStorage)
+		fmt.Println(CityStatePersonSlice)
+		Operation()
+	case 6:
 		break
-
 	}
 
 }
 
-func duplicate(name string) bool {
-	var fName string
-	fmt.Println("Enter Name : ")
-	fmt.Scanln(&fName)
-	if name == fName {
-		return true
+func Search(people *[]Contact) []Contact {
+	var cityState string
+	fmt.Println("Enter City or State")
+	fmt.Scanln(&cityState)
+
+	storingCityState := []Contact{}
+	CityStateString := strings.TrimSpace(cityState)
+	for _, person := range *people {
+		if strings.Contains(person.City, CityStateString) || strings.Contains(person.State, CityStateString) {
+
+			storingCityState = append(storingCityState, person)
+		}
 	}
-	return false
+	return storingCityState
 }
 
 func filter(person *[]Contact, duplicate func(string) bool) []Contact {
@@ -126,40 +133,50 @@ func DisplayContacts(persons *[]Contact) {
 	Operation()
 }
 
-func AddContact() {
+func AddContact(fName string) {
 
 	var p Contact
 
-	fmt.Print("\nEnter Name: ")
-	_, err := fmt.Scanf("%s", &p.FirstName)
-	Error(err, "Name")
+	checkingDuplicateNames := filter(&contactStorage, func(name string) bool {
+		if name == fName {
+			return true
+		}
+		return false
+	})
 
-	fmt.Print("Enter Last Name: ")
-	_, err = fmt.Scanf("%s", &p.LastName)
-	Error(err, "LastName")
+	if len(checkingDuplicateNames) > 0 {
+		fmt.Println("Duplicate entry press")
+		Operation()
+	} else {
+		p.FirstName = fName
 
-	fmt.Print("Enter address: ")
-	_, err = fmt.Scanf("%s", &p.Address)
-	Error(err, "Address")
+		fmt.Print("Enter Last Name: ")
+		_, err := fmt.Scanf("%s", &p.LastName)
+		Error(err, "LastName")
 
-	fmt.Print("Enter City: ")
-	_, err = fmt.Scanf("%s", &p.City)
-	Error(err, "City")
+		fmt.Print("Enter address: ")
+		_, err = fmt.Scanf("%s", &p.Address)
+		Error(err, "Address")
 
-	fmt.Print("Enter State: ")
-	_, err = fmt.Scanf("%s", &p.State)
-	Error(err, "State")
+		fmt.Print("Enter City: ")
+		_, err = fmt.Scanf("%s", &p.City)
+		Error(err, "City")
 
-	fmt.Print("Enter phone number: ")
-	_, err = fmt.Scanf("%s", &p.PhoneNumber)
-	Error(err, "Phone number")
+		fmt.Print("Enter State: ")
+		_, err = fmt.Scanf("%s", &p.State)
+		Error(err, "State")
 
-	fmt.Print("Enter email: ")
-	_, err = fmt.Scanf("%s", &p.Email)
-	Error(err, "Email")
+		fmt.Print("Enter phone number: ")
+		_, err = fmt.Scanf("%s", &p.PhoneNumber)
+		Error(err, "Phone number")
 
-	contactStorage = append(contactStorage, p)
-	Operation()
+		fmt.Print("Enter email: ")
+		_, err = fmt.Scanf("%s", &p.Email)
+		Error(err, "Email")
+
+		contactStorage = append(contactStorage, p)
+		Operation()
+	}
 
 }
 
