@@ -9,7 +9,7 @@ var contactStorage []Contact
 
 func Operation() {
 	var option int
-	fmt.Println("\nSelect which operation do you wanna perform \n1.Add Contact\n2.Edit Contact\n3.Delete Contact\n4.Display Contact\n5.Search By city and state \n6.Exit")
+	fmt.Println("\nSelect which operation do you wanna perform \n1.Add Contact\n2.Edit Contact\n3.Delete Contact\n4.Display Contact\n5.Search By city and state \n6.Search By City and State in Map Format \n7.Exit")
 	fmt.Scanln(&option)
 	switch option {
 	case 1:
@@ -28,9 +28,68 @@ func Operation() {
 		fmt.Println(CityStatePersonSlice)
 		Operation()
 	case 6:
+		SearchStateOrCity(&contactStorage)
+	case 7:
 		break
 	}
 
+}
+
+func CityFilter(ContactList *[]Contact, findingCity func(string) bool) []Contact {
+	CitySlice := []Contact{}
+	for _, val := range *ContactList {
+		if findingCity(val.City) {
+			CitySlice = append(CitySlice, val)
+		}
+	}
+	return CitySlice
+}
+func StateFilter(ContactList *[]Contact, findingState func(string) bool) []Contact {
+	StateSlice := []Contact{}
+	for _, val := range *ContactList {
+		if findingState(val.State) {
+			StateSlice = append(StateSlice, val)
+		}
+	}
+	return StateSlice
+}
+
+func SearchStateOrCity(people *[]Contact) {
+	var cityState string
+	CityMap := make(map[string]string, 0)
+	stateMap := make(map[string]string, 0)
+
+	fmt.Println("Enter City or State to find How many Persons belongs to it")
+	fmt.Scanln(&cityState)
+
+	ResultOfSameCity := CityFilter(people, func(cityName string) bool {
+		if cityState == cityName {
+			return true
+		} else {
+			return false
+		}
+	})
+
+	ResultOfSameState := StateFilter(people, func(stateName string) bool {
+		if cityState == stateName {
+			return true
+		} else {
+			return false
+		}
+	})
+
+	//Printing person names with same state in Map
+	for _, val := range ResultOfSameState {
+		stateMap[val.State] = val.FirstName
+		fmt.Println(stateMap)
+	}
+
+	//Printing person names with same city in Map
+	for _, val := range ResultOfSameCity {
+		CityMap[val.City] = val.FirstName
+		fmt.Println(CityMap)
+	}
+	Operation()
 }
 
 func Search(people *[]Contact) []Contact {
@@ -63,7 +122,6 @@ func filter(person *[]Contact, duplicate func(string) bool) []Contact {
 
 func DeleteContact(persons *[]Contact) {
 	//Ability to delete person by using person name
-
 	var nameToDelete string
 	fmt.Println("Enter a name which you want to Delete :")
 	fmt.Scanln(&nameToDelete)
