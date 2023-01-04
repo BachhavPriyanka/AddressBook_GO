@@ -30,11 +30,29 @@ func Operation() {
 	case 6:
 		SearchStateOrCity(&contactStorage)
 	case 7:
+		CityStatePersonCount := SearchCount(&contactStorage)
+		fmt.Println("Person from same City/State : ", CityStatePersonCount)
+		Operation()
+	case 8:
 		break
 	}
 
 }
 
+func SearchCount(people *[]Contact) int {
+	var cityState string
+	fmt.Println("Enter City or State")
+	fmt.Scanln(&cityState)
+	count := 0
+
+	CityStateString := strings.TrimSpace(cityState)
+	for _, person := range *people {
+		if strings.Contains(person.City, CityStateString) || strings.Contains(person.State, CityStateString) {
+			count++
+		}
+	}
+	return count
+}
 func CityFilter(ContactList *[]Contact, findingCity func(string) bool) []Contact {
 	CitySlice := []Contact{}
 	for _, val := range *ContactList {
